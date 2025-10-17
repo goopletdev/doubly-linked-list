@@ -1,2 +1,2 @@
-# clink
-c99 doubly and singly linked list data structures
+# gd_dll
+c99 doubly linked list data structure
