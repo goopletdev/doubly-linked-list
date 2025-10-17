@@ -112,6 +112,3 @@ void gd_dll_reverse(gd_dll* list) {
     }
 }
 
-
-
-
