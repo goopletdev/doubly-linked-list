@@ -1,6 +1,9 @@
 #include "gd-dll.h"
 #include "unity.h"
 
+#include <stdlib.h>
+#include <string.h>
+
 gd_dll* list;
 
 void setUp(void) {
@@ -95,7 +98,7 @@ void gdDllTest_unshift_shouldPrependValue(void) {
     TEST_ASSERT_EQUAL(node1, list->tail);
     // test node1 members
     TEST_ASSERT_NULL(node1->next);
-    TEST_ASSERT_EQUAL(node2, node1->next);
+    TEST_ASSERT_EQUAL(node2, node1->prev);
     TEST_ASSERT_EQUAL_STRING("Hello", node1->value);
     // test node2 members
     TEST_ASSERT_EQUAL(node1, node2->next);
@@ -130,7 +133,7 @@ void gdDllTest_pop_shouldRemoveAndReturnLastValue(void) {
     strcpy(string3, "test");
     gd_dll_node* node1 = gd_dll_push(list, string1);
     gd_dll_node* node2 = gd_dll_push(list, string2);
-    gd_dll_node* node3 = gd_dll_push(list, string3);
+    gd_dll_push(list, string3);
 
     TEST_ASSERT_EQUAL_STRING("test", gd_dll_pop(list));
     TEST_ASSERT_NULL(node2->next);
@@ -159,21 +162,21 @@ void gdDllTest_shift_shouldRemoveAndReturnFirstValue(void) {
     strcpy(string1, "Hello");
     strcpy(string2, "world");
     strcpy(string3, "test");
-    gd_dll_node* node1 = gd_dll_push(list, string1);
+    gd_dll_push(list, string1);
     gd_dll_node* node2 = gd_dll_push(list, string2);
     gd_dll_node* node3 = gd_dll_push(list, string3);
 
-    TEST_ASSERT_EQUAL_STRING("Hello", gd_dll_unshift(list));
+    TEST_ASSERT_EQUAL_STRING("Hello", gd_dll_shift(list));
     TEST_ASSERT_NULL(node2->prev);
     TEST_ASSERT_EQUAL(node2, list->head);
     TEST_ASSERT_EQUAL(2, list->length);
 
-    TEST_ASSERT_EQUAL_STRING("world", gd_dll_unshift(list));
+    TEST_ASSERT_EQUAL_STRING("world", gd_dll_shift(list));
     TEST_ASSERT_NULL(node3->prev);
     TEST_ASSERT_EQUAL(node3, list->head);
     TEST_ASSERT_EQUAL(1, list->length);
 
-    TEST_ASSERT_EQUAL_STRING("test", gd_dll_unshift(list));
+    TEST_ASSERT_EQUAL_STRING("test", gd_dll_shift(list));
     TEST_ASSERT_NULL(list->head);
     TEST_ASSERT_NULL(list->tail);
     TEST_ASSERT_EQUAL(0, list->length);
@@ -188,8 +191,7 @@ char buffer[1024];
 
 void forEach_test_callback(void* value) {
     char* string = (char*)value;
-    strcat(buffer, string[0]);
-    count++;
+    buffer[count++] = string[0];
 }
 
 void gdDllTest_forEach_shouldIterateFromHeadToTail(void) {
@@ -200,16 +202,16 @@ void gdDllTest_forEach_shouldIterateFromHeadToTail(void) {
     strcpy(string1, "Hello");
     strcpy(string2, "world");
     strcpy(string3, "test");
-    gd_dll_node* node1 = gd_dll_push(list, string1);
-    gd_dll_node* node2 = gd_dll_push(list, string2);
-    gd_dll_node* node3 = gd_dll_push(list, string3);
+    gd_dll_push(list, string1);
+    gd_dll_push(list, string2);
+    gd_dll_push(list, string3);
 
     gd_dll_forEach(list, forEach_test_callback);
     TEST_ASSERT_EQUAL(3, count);
     TEST_ASSERT_EQUAL_STRING("Hwt", buffer);
 }
 
-void gdDllText_reverse_shouldReverseNodeValueOrder(void) {
+void gdDllTest_reverse_shouldReverseNodeValueOrder(void) {
     char* string1 = (char*)malloc(sizeof(char) * 6);
     char* string2 = (char*)malloc(sizeof(char) * 6);
     char* string3 = (char*)malloc(sizeof(char) * 5);

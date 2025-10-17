@@ -2,6 +2,8 @@
  * Doubly-linked list data structure and methods
  *****************************************************************************/
 
+#include <stdlib.h>
+
 #ifndef GD_DLL_H
 #define GD_DLL_H
 

@@ -28,6 +28,8 @@ gd_dll_node* gd_dll_push(gd_dll* list, void* value) {
     node->next = NULL;
     if (list->tail) {
         list->tail->next = node;
+    } else {
+        list->head = node;
     }
     list->tail = node;
     list->length++;
@@ -41,6 +43,8 @@ gd_dll_node* gd_dll_unshift(gd_dll* list, void* value) {
     node->next = list->head;
     if (list->head) {
         list->head->prev = node;
+    } else {
+        list->tail = node;
     }
     list->head = node;
     list->length++;
@@ -55,6 +59,8 @@ void* gd_dll_pop(gd_dll* list) {
     list->tail = node->prev;
     if (list->tail) {
         list->tail->next = NULL;
+    } else {
+        list->head = NULL;
     }
     void* value = node->value;
     free(node);
@@ -68,8 +74,10 @@ void* gd_dll_shift(gd_dll* list) {
         return NULL;
     }
     list->head = node->next;
-    if (list->tail) {
-        list->tail->prev = NULL;
+    if (list->head) {
+        list->head->prev = NULL;
+    } else {
+        list->tail = NULL;
     }
     void* value = node->value;
     free(node);
@@ -77,7 +85,7 @@ void* gd_dll_shift(gd_dll* list) {
     return value;
 }
 
-void gd_dll_forEach(gd_dll* list, int (*callback)(void* value)) {
+void gd_dll_forEach(gd_dll* list, void (*callback)(void* value)) {
     gd_dll_node* node = list->head;
     while (node) {
         callback(node->value);
